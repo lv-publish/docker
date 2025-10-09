@@ -1,0 +1,21 @@
+# see https://docs.searxng.org/admin/settings/settings.html#settings-use-default-settings
+use_default_settings: true
+server:
+  secret_key: "4d7699caccd71fbcd45d66e3591f7a5cb043aa30cac1aaf2b0d490530ce2312e"
+  limiter: false
+  image_proxy: false
+  public: true
+
+outgoing:
+  pool_connections: 100    # tổng số kết nối TCP giữ mở
+  pool_maxsize: 1          # số request song song tối đa tới các engine
+  request_timeout: 60.0     # timeout mặc định cho mỗi request
+  max_request_timeout: 10.0 # timeout tối đa nếu retry
+
+search:
+  formats:
+    - html
+    - json
+
+valkey:
+  url: redis://redis:6379/0
