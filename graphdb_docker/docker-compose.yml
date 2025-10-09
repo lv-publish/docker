@@ -1,0 +1,22 @@
+services:
+  graphdb:
+    image: ontotext/graphdb:11.1.0
+    container_name: graphdb
+    ports:
+      - "7200:7200"
+    environment:
+      GDB_JAVA_OPTS: -Xms512m -Xmx2g -Dgraphdb.home=/opt/graphdb/home -Dgraphdb.workbench.importDirectory=/root/graphdb-import
+    volumes:
+      - graphdb-data:/opt/graphdb/home
+      - graphdb-import:/root/graphdb-import
+      - ./license:/opt/graphdb/home/conf:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  graphdb-data:
+  graphdb-import:
