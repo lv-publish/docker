@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cqf-ruler
+  labels:
+    app: cqf-ruler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cqf-ruler
+  template:
+    metadata:
+      labels:
+        app: cqf-ruler
+    spec:
+      containers:
+        - name: cqf-ruler
+          image: cqf-ruler:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx512m"
