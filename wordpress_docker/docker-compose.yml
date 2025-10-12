@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    container_name: wp_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-change_me}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wordpress}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
+    volumes:
+      - wordpress_mariadb_data:/var/lib/mysql
+    networks:
+      - wpnet
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - "127.0.0.1:8082:80"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/wp-login.php || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - wpnet
+
+volumes:
+  wordpress_mariadb_data:
+  wordpress_data:
+
+networks:
+  wpnet:
