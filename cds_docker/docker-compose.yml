@@ -1,47 +1,39 @@
 version: "3.8"
 
 services:
-  cds-at:
-    image: hlseven/cds-connect-authoring-tool:latest
-    restart: unless-stopped
+  mongo:
+    image: mongo:6
+    # không mount volume nếu bạn muốn để trong container (đối với dev/test)
+    # ports:
+    #   - "27017:27017"
     environment:
-      # MongoDB connection used by the API
-      MONGO_URL: "mongodb://cds-at-mongo:27017/cds_authoring"
-      # CQL translator/formatter service used for CQL processing
-      CQL_TO_ELM_URL: "http://cds-at-cql2elm:8080/cql/translator"
-      CQL_FORMATTER_URL: "http://cds-at-cql2elm:8080/cql/formatter"
-      # set to 'production' for deployment
-      NODE_ENV: production
-      # if you want an external proxy to handle /authoring/api, disable the built-in proxy
-      API_PROXY_ACTIVE: "false"
-    volumes:
-      # Override api config if you want to provide custom local.json / users
-      # - ./api/config:/usr/src/app/api/config:ro
-      # persistent uploads / state (optional)
-      - cds_data:/usr/src/app/data
-    ports:
-      - "3001:3001" # API
-      - "9000:9000" # Frontend
-    depends_on:
-      - cds-at-mongo
-      - cds-at-cql2elm
-
-  cds-at-mongo:
-    image: mongo:8
+      # nếu cần user / pass bạn có thể thêm MONGO_INITDB_ROOT_USERNAME / PASSWORD
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: example
     restart: unless-stopped
-    # Use a named Docker volume instead of a host bind mount. Bind mounts to
-    # some host filesystems (or Docker setups) can make Mongo start very slowly.
-    # volumes:
-    #   - mongo_data:/data/db
-    ports:
-      - "27017:27017"
 
-  cds-at-cql2elm:
+  cql2elm:
     image: cqframework/cql-translation-service:v2.6.0
+    # ports:
+    #   - "8080:8080"
     restart: unless-stopped
-    ports:
-      - "8083:8080"
 
-volumes:
-  # mongo_data:
-  cds_data:
+  app:
+    # nếu bạn build một image chứa backend & frontend, hoặc dùng image mặc định
+    image: hlseven/cds-connect-authoring-tool:latest
+    depends_on:
+      - mongo
+      - cql2elm
+    ports:
+      - "9000:9000" # port frontend / proxy
+      - "3001:3001" # port backend API nếu cần
+    environment:
+      # biến để backend kết nối tới Mongo & CQL service
+      CQL_TO_ELM_URL: http://cql2elm:8080/cql/translator
+      CQL_FORMATTER_URL: http://cql2elm:8080/cql/formatter
+      MONGO_URL: mongodb://mongo/cds_authoring
+      AUTH_SESSION_SECRET: secretkey123 # bạn thay bằng secret thực
+      NODE_ENV: development
+      # nếu bạn không muốn proxy frontend → backend, có thể tắt proxy
+      API_PROXY_ACTIVE: "false"
+    restart: unless-stopped
