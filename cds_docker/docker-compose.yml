@@ -20,10 +20,5 @@ services:
     image: mongo:8
     ports:
       - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
   cds-at-cql2elm:
     image: cqframework/cql-translation-service:v2.6.0
-
-volumes:
-  mongo_data:
