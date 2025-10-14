@@ -18,7 +18,7 @@ services:
       - cql2elm
     ports:
       - "9000:9000" # port frontend / proxy
-      - "3001:3000" # port backend API nếu cần
+      - "3001:3001" # port backend API nếu cần
     environment:
       CQL_TO_ELM_URL: http://cql2elm:8080/cql/translator
       CQL_FORMATTER_URL: http://cql2elm:8080/cql/formatter
