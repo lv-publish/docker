@@ -1,22 +1,5 @@
 version: "3.8"
 
-# NOTE: Upstream docs show building an image with:
-#   docker build -t hlseven/cds-connect-authoring-tool:latest .
-#
-# There are two common ways to deploy with this compose file:
-# 1) Use a published image (fast): set the `image:` field to the image you want
-#    (current file uses `p3000/cds-connect-authoring-tool:latest`).
-# 2) Build from local source (recommended if you cloned the project and modified it):
-#    - Run the docker build command in the repository root (where Dockerfile lives)
-#      then either keep `image: hlseven/cds-connect-authoring-tool:latest` here
-#      or switch to the `build:` variant shown below.
-#
-# Example build workflow (PowerShell):
-#   cd <path-to-cds-repo-root>
-#   docker build -t hlseven/cds-connect-authoring-tool:latest .
-#   # then from this compose folder you can run:
-#   docker compose up -d
-
 services:
   cds-at:
     image: hlseven/cds-connect-authoring-tool:latest
@@ -33,9 +16,9 @@ services:
       API_PROXY_ACTIVE: "false"
     volumes:
       # Override api config if you want to provide custom local.json / users
-      - ./api/config:/usr/src/app/api/config:ro
+      # - ./api/config:/usr/src/app/api/config:ro
       # persistent uploads / state (optional)
-      - ./data:/usr/src/app/data
+      - cds_data:/usr/src/app/data
     ports:
       - "3001:3001" # API
       - "9000:9000" # Frontend
@@ -43,39 +26,13 @@ services:
       - cds-at-mongo
       - cds-at-cql2elm
 
-  # -----------------------------------------------------------------------------
-  # OPTIONAL: If you have the cds-connect-authoring-tool source available locally
-  # and want Docker Compose to build the image for you, replace the cds-at
-  # service above with the following (or uncomment and adjust `context:` path):
-  #
-  #  cds-at:
-  #    build:
-  #      context: ../path-to-cds-repo-root
-  #      dockerfile: Dockerfile
-  #    image: hlseven/cds-connect-authoring-tool:latest
-  #    restart: unless-stopped
-  #    environment:
-  #      MONGO_URL: "mongodb://cds-at-mongo:27017/cds_authoring"
-  #      CQL_TO_ELM_URL: "http://cds-at-cql2elm:8080/cql/translator"
-  #      CQL_FORMATTER_URL: "http://cds-at-cql2elm:8080/cql/formatter"
-  #      NODE_ENV: production
-  #      API_PROXY_ACTIVE: "false"
-  #    volumes:
-  #      - ./api/config:/usr/src/app/api/config:ro
-  #      - ./data:/usr/src/app/data
-  #    ports:
-  #      - "3001:3001"
-  #      - "9000:9000"
-  #    depends_on:
-  #      - cds-at-mongo
-  #      - cds-at-cql2elm
-  # -----------------------------------------------------------------------------
-
   cds-at-mongo:
     image: mongo:8
     restart: unless-stopped
+    # Use a named Docker volume instead of a host bind mount. Bind mounts to
+    # some host filesystems (or Docker setups) can make Mongo start very slowly.
     volumes:
-      - ./db:/data/db
+      - mongo_data:/data/db
     ports:
       - "27017:27017"
 
@@ -84,7 +41,7 @@ services:
     restart: unless-stopped
     ports:
       - "8083:8080"
-# Notes:
-# - The official upstream docker-compose exposes the frontend on 9000 and the API on 3001.
-# - This compose file mounts a local api/config directory so you can place configuration
-#   (local.json / local-users.json) there before starting.
+
+volumes:
+  mongo_data:
+  cds_data:
