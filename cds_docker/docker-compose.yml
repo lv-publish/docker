@@ -1,24 +1,32 @@
 version: "3.8"
 
 services:
-  cds-at:
-    image: hlseven/cds-connect-authoring-tool:latest
-    environment:
-      MONGO_URL: mongodb://cds-at-mongo/cds_authoring
-      CQL_TO_ELM_URL: http://cds-at-cql2elm:8080/cql/translator
-      CQL_FORMATTER_URL: http://cds-at-cql2elm:8080/cql/formatter
-      NODE_ENV: development
+  mongo:
+    image: mongo:6
     volumes:
-      - ./api/config:/usr/src/app/api/config
-    ports:
-      - "3001:3001"
-      - "9000:9000"
-    links:
-      - cds-at-mongo
-      - cds-at-cql2elm
-  cds-at-mongo:
-    image: mongo:8
-    ports:
-      - "27017:27017"
-  cds-at-cql2elm:
+      - mongo_data:/data/db # 📦 lưu dữ liệu MongoDB
+    restart: unless-stopped
+
+  cql2elm:
     image: cqframework/cql-translation-service:v2.6.0
+    restart: unless-stopped
+
+  app:
+    image: hlseven/cds-connect-authoring-tool:latest
+    depends_on:
+      - mongo
+      - cql2elm
+    ports:
+      - "9000:9000" # port frontend / proxy
+      - "3001:3000" # port backend API nếu cần
+    environment:
+      CQL_TO_ELM_URL: http://cql2elm:8080/cql/translator
+      CQL_FORMATTER_URL: http://cql2elm:8080/cql/formatter
+      MONGO_URL: mongodb://mongo/cds_authoring
+      AUTH_SESSION_SECRET: secretkey123
+      NODE_ENV: development
+      API_PROXY_ACTIVE: "true"
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
