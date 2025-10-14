@@ -19,7 +19,7 @@ version: "3.8"
 
 services:
   cds-at:
-    image: p3000/cds-connect-authoring-tool:latest
+    image: hlseven/cds-connect-authoring-tool:latest
     restart: unless-stopped
     environment:
       # MongoDB connection used by the API
