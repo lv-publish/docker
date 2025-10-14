@@ -6,10 +6,10 @@ services:
     # không mount volume nếu bạn muốn để trong container (đối với dev/test)
     # ports:
     #   - "27017:27017"
-    environment:
-      # nếu cần user / pass bạn có thể thêm MONGO_INITDB_ROOT_USERNAME / PASSWORD
-      # MONGO_INITDB_ROOT_USERNAME: root
-      # MONGO_INITDB_ROOT_PASSWORD: example
+    # environment:
+    # nếu cần user / pass bạn có thể thêm MONGO_INITDB_ROOT_USERNAME / PASSWORD
+    # MONGO_INITDB_ROOT_USERNAME: root
+    # MONGO_INITDB_ROOT_PASSWORD: example
     restart: unless-stopped
 
   cql2elm:
