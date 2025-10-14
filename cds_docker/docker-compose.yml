@@ -25,7 +25,7 @@ services:
       MONGO_URL: mongodb://mongo/cds_authoring
       AUTH_SESSION_SECRET: secretkey123
       NODE_ENV: development
-      API_PROXY_ACTIVE: "false"
+      API_PROXY_ACTIVE: "true"
     restart: unless-stopped
 
 volumes:
