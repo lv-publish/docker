@@ -3,23 +3,15 @@ version: "3.8"
 services:
   mongo:
     image: mongo:6
-    # không mount volume nếu bạn muốn để trong container (đối với dev/test)
-    # ports:
-    #   - "27017:27017"
-    # environment:
-    # nếu cần user / pass bạn có thể thêm MONGO_INITDB_ROOT_USERNAME / PASSWORD
-    # MONGO_INITDB_ROOT_USERNAME: root
-    # MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo_data:/data/db # 📦 lưu dữ liệu MongoDB
     restart: unless-stopped
 
   cql2elm:
     image: cqframework/cql-translation-service:v2.6.0
-    # ports:
-    #   - "8080:8080"
     restart: unless-stopped
 
   app:
-    # nếu bạn build một image chứa backend & frontend, hoặc dùng image mặc định
     image: hlseven/cds-connect-authoring-tool:latest
     depends_on:
       - mongo
@@ -28,12 +20,13 @@ services:
       - "9000:9000" # port frontend / proxy
       - "3001:3001" # port backend API nếu cần
     environment:
-      # biến để backend kết nối tới Mongo & CQL service
       CQL_TO_ELM_URL: http://cql2elm:8080/cql/translator
       CQL_FORMATTER_URL: http://cql2elm:8080/cql/formatter
       MONGO_URL: mongodb://mongo/cds_authoring
-      AUTH_SESSION_SECRET: secretkey123 # bạn thay bằng secret thực
+      AUTH_SESSION_SECRET: secretkey123
       NODE_ENV: development
-      # nếu bạn không muốn proxy frontend → backend, có thể tắt proxy
       API_PROXY_ACTIVE: "false"
     restart: unless-stopped
+
+volumes:
+  mongo_data:
