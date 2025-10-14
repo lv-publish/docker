@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  cqf-ruler:
+    image: alphora/cqf-ruler:latest
+    container_name: cqf-ruler
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: "-Xms512m -Xmx1g"
+    restart: unless-stopped
+    # Uncomment to persist application data or logs
+    # volumes:
+    #   - ./data:/app/data
