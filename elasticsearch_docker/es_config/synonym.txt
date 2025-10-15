@@ -1,0 +1,10 @@
+﻿tncn => thu_nhập cá_nhân tncn
+thuế tncn => thuế_thu_nhập cá_nhân
+thuế gtgt => thuế_giá_trị gia_tăng
+gtgt => giá_trị gia_tăng gtgt
+ttđb => tiêu_thụ đặc_biệt ttđb
+ttdb => tiêu_thụ đặc_biệt ttdb
+ttdb => ttđb
+thuế tndn => thuế_thu_nhập doanh_nghiệp
+tndn => thu_nhập doanh_nghiệp tndn
+xnk => xuất_nhập_khẩu xnk
