@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+  es01:
+    build:
+      context: .
+      dockerfile: Dockerfile # 👉 dùng image custom đã cài ICU
+    container_name: es01
+    environment:
+      - node.name=es01
+      - node.roles=master,data,ingest
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=es01,es02
+      - discovery.seed_hosts=es01,es02
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms${ES_JAVA_XMS} -Xmx${ES_JAVA_XMX}
+      - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
+      - xpack.security.http.ssl.enabled=${XPACK_HTTP_SSL_ENABLED}
+      - xpack.security.transport.ssl.enabled=${XPACK_TRANSPORT_SSL_ENABLED}
+      - xpack.license.self_generated.type=${LICENSE}
+      - cluster.routing.allocation.enable=all
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata01:/usr/share/elasticsearch/data
+    ports:
+      - "${ES_PORT}:9200"
+    networks:
+      - esnet
+    mem_limit: ${ES_MEM_LIMIT}
+
+  es02:
+    build:
+      context: .
+      dockerfile: Dockerfile # 👉 dùng chung Dockerfile này
+    container_name: es02
+    environment:
+      - node.name=es02
+      - node.roles=master,data,ingest
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=es01,es02
+      - discovery.seed_hosts=es01,es02
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms${ES_JAVA_XMS} -Xmx${ES_JAVA_XMX}
+      - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
+      - xpack.security.http.ssl.enabled=${XPACK_HTTP_SSL_ENABLED}
+      - xpack.security.transport.ssl.enabled=${XPACK_TRANSPORT_SSL_ENABLED}
+      - xpack.license.self_generated.type=${LICENSE}
+      - cluster.routing.allocation.enable=all
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata02:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+    mem_limit: ${ES_MEM_LIMIT}
+
+volumes:
+  esdata01:
+  esdata02:
+
+networks:
+  esnet: # ✅ dùng tên tĩnh, không dùng biến
