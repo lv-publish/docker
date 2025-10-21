@@ -1,0 +1,21 @@
+# Environment variables
+.env
+
+# SSL Certificates
+nginx/ssl/*.crt
+nginx/ssl/*.key
+nginx/ssl/*.pem
+
+# Backup files
+*.tar.gz
+*.zip
+
+# Logs
+*.log
+
+# Mac
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

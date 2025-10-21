@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: onlyoffice-documentserver
+    restart: unless-stopped
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=my_jwt_secret_change_this
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    ports:
+      - "8880:80"
+      - "8443:443"
+    volumes:
+      - onlyoffice_data:/var/www/onlyoffice/Data
+      - onlyoffice_log:/var/log/onlyoffice
+      - onlyoffice_fonts:/usr/share/fonts/truetype/custom
+      - onlyoffice_forgotten:/var/lib/onlyoffice/documentserver/App_Data/cache/files/forgotten
+    networks:
+      - onlyoffice_network
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: onlyoffice-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - onlyoffice
+    networks:
+      - onlyoffice_network
+
+volumes:
+  onlyoffice_data:
+    driver: local
+  onlyoffice_log:
+    driver: local
+  onlyoffice_fonts:
+    driver: local
+  onlyoffice_forgotten:
+    driver: local
+
+networks:
+  onlyoffice_network:
+    driver: bridge
