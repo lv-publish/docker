@@ -1,0 +1,270 @@
+spring:
+  datasource:
+    # Cấu hình kết nối PostgreSQL
+    url: 'jdbc:postgresql://postgres:5432/hapi'
+    username: hapi
+    password: hapi_password
+    driverClassName: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      leak-detection-threshold: 60000
+  
+  jpa:
+    properties:
+      # Sử dụng dialect PostgreSQL tùy chỉnh cho HAPI FHIR
+      hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      hibernate.search.enabled: false
+      hibernate.format_sql: false
+      hibernate.show_sql: false
+      hibernate.hbm2ddl.auto: update
+      hibernate.jdbc.batch_size: 20
+      hibernate.jdbc.fetch_size: 100
+      hibernate.cache.use_query_cache: false
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_structured_entries: false
+      hibernate.cache.use_minimal_puts: false
+
+  # Tắt Flyway migration vì version mới có vấn đề compatibility
+  flyway:
+    enabled: false
+
+  # Cho phép circular references để fix lỗi dependency cycle
+  main:
+    allow-circular-references: true
+
+  # Cấu hình server
+  servlet:
+    context-path: /
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+
+hapi:
+  fhir:
+    # Cấu hình phiên bản FHIR - R4B
+    fhir_version: R4B
+    
+    # Cấu hình server
+    server_address: http://localhost:8080/fhir
+    base_url_fixed: true
+    default_encoding: JSON
+    default_pretty_print: true
+    
+    # Cấu hình tìm kiếm
+    max_page_size: 200
+    default_page_size: 20
+    allow_multiple_delete: true
+    allow_override_default_search_params: true
+    
+    # Cấu hình CORS
+    cors:
+      allow_Credentials: true
+      allowed_origin_patterns: '*'
+      
+    # Cấu hình validation
+    validation:
+      requests_enabled: true
+      responses_enabled: false
+      
+    # Tính năng subscription (đăng ký thông báo)
+    subscription:
+      resthook_enabled: true
+      websocket_enabled: false
+      email:
+        enabled: false
+      
+    # Tính năng MDM (Master Data Management) - tắt để đơn giản
+    mdm_enabled: false
+    
+    # Tính năng Clinical Reasoning - tắt để đơn giản  
+    cr_enabled: false
+    
+    # Cấu hình narrative generation
+    narrative_enabled: true
+    
+    # Cấu hình binary storage
+    binary_storage_enabled: true
+    binary_storage_mode: DATABASE
+    
+    # Tắt elasticsearch để sử dụng Lucene đơn giản
+    elasticsearch:
+      enabled: false
+      
+    # Cấu hình advanced search
+    lastn_enabled: false
+    store_resource_in_lucene_index_enabled: false
+    
+    # Cấu hình log
+    logger:
+      error_format: JSON
+      log_exceptions: true
+      
+    # Cấu hình tester UI
+    tester:
+      - id: home
+        name: "Local Tester"
+        server_address: "http://localhost:8080/fhir"
+        refuse_to_fetch_third_party_urls: false
+        fhir_version: R4B
+        
+    # Supported resource types cho R4B
+    supported_resource_types:
+      - Account
+      - ActivityDefinition
+      - AdverseEvent
+      - AllergyIntolerance
+      - Appointment
+      - AppointmentResponse
+      - AuditEvent
+      - Basic
+      - Binary
+      - BiologicallyDerivedProduct
+      - BodyStructure
+      - Bundle
+      - CapabilityStatement
+      - CarePlan
+      - CareTeam
+      - CatalogEntry
+      - ChargeItem
+      - ChargeItemDefinition
+      - Citation
+      - Claim
+      - ClaimResponse
+      - ClinicalImpression
+      - ClinicalUseDefinition
+      - CodeSystem
+      - Communication
+      - CommunicationRequest
+      - CompartmentDefinition
+      - Composition
+      - ConceptMap
+      - Condition
+      - Consent
+      - Contract
+      - Coverage
+      - CoverageEligibilityRequest
+      - CoverageEligibilityResponse
+      - DetectedIssue
+      - Device
+      - DeviceDefinition
+      - DeviceMetric
+      - DeviceRequest
+      - DeviceUseStatement
+      - DiagnosticReport
+      - DocumentManifest
+      - DocumentReference
+      - Encounter
+      - Endpoint
+      - EnrollmentRequest
+      - EnrollmentResponse
+      - EpisodeOfCare
+      - EventDefinition
+      - Evidence
+      - EvidenceReport
+      - EvidenceVariable
+      - ExampleScenario
+      - ExplanationOfBenefit
+      - FamilyMemberHistory
+      - Flag
+      - Goal
+      - GraphDefinition
+      - Group
+      - GuidanceResponse
+      - HealthcareService
+      - ImagingStudy
+      - Immunization
+      - ImmunizationEvaluation
+      - ImmunizationRecommendation
+      - ImplementationGuide
+      - Ingredient
+      - InsurancePlan
+      - Invoice
+      - Library
+      - Linkage
+      - List
+      - Location
+      - ManufacturedItemDefinition
+      - Measure
+      - MeasureReport
+      - Media
+      - Medication
+      - MedicationAdministration
+      - MedicationDispense
+      - MedicationKnowledge
+      - MedicationRequest
+      - MedicationStatement
+      - MedicinalProductDefinition
+      - MessageDefinition
+      - MessageHeader
+      - MolecularSequence
+      - NamingSystem
+      - NutritionOrder
+      - NutritionProduct
+      - Observation
+      - ObservationDefinition
+      - OperationDefinition
+      - OperationOutcome
+      - Organization
+      - OrganizationAffiliation
+      - PackagedProductDefinition
+      - Parameters
+      - Patient
+      - PaymentNotice
+      - PaymentReconciliation
+      - Person
+      - PlanDefinition
+      - Practitioner
+      - PractitionerRole
+      - Procedure
+      - Provenance
+      - Questionnaire
+      - QuestionnaireResponse
+      - RegulatedAuthorization
+      - RelatedPerson
+      - RequestGroup
+      - ResearchDefinition
+      - ResearchElementDefinition
+      - ResearchStudy
+      - ResearchSubject
+      - RiskAssessment
+      - Schedule
+      - SearchParameter
+      - ServiceRequest
+      - Slot
+      - Specimen
+      - SpecimenDefinition
+      - StructureDefinition
+      - StructureMap
+      - Subscription
+      - SubscriptionStatus
+      - SubscriptionTopic
+      - Substance
+      - SubstanceDefinition
+      - SupplyDelivery
+      - SupplyRequest
+      - Task
+      - TerminologyCapabilities
+      - TestReport
+      - TestScript
+      - ValueSet
+      - VerificationResult
+      - VisionPrescription
+
+# Cấu hình logging
+logging:
+  level:
+    ca.uhn.fhir: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
