@@ -53,8 +53,8 @@ hapi:
     fhir_version: R4B
     
     # Cấu hình server
-    server_address: https://hapi-fhir.tabca.vn/fhir
-    base_url_fixed: true
+    server_address: http://localhost:8080/fhir
+    base_url_fixed: false
     default_encoding: JSON
     default_pretty_print: true
     
@@ -110,8 +110,8 @@ hapi:
     # Cấu hình tester UI
     tester:
       - id: home
-        name: "Production Tester"
-        server_address: "https://hapi-fhir.tabca.vn/fhir"
+        name: "Local Tester"
+        server_address: "http://localhost:8080/fhir"
         refuse_to_fetch_third_party_urls: false
         fhir_version: R4B
         
