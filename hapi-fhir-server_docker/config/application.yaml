@@ -64,10 +64,9 @@ hapi:
     allow_multiple_delete: true
     allow_override_default_search_params: true
     
-    # Cấu hình CORS
+    # Cấu hình CORS - tắt để Nginx xử lý
     cors:
-      allow_Credentials: true
-      allowed_origin_patterns: '*'
+      allowed_origin_patterns: []
       
     # Cấu hình validation
     validation:
