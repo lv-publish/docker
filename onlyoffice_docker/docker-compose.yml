@@ -7,6 +7,10 @@ services:
     restart: unless-stopped
     environment:
       - JWT_ENABLED=false
+      - WOPI_ENABLED=true
+      - USE_UNAUTHORIZED_STORAGE=true
+      - ALLOW_PRIVATE_IP_ADDRESS=true
+      - ALLOW_META_IP_ADDRESS=true
     ports:
       - "8880:80"
     # volumes:
