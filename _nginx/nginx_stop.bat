@@ -1,0 +1,1 @@
+nginx_basic.exe -s stop
