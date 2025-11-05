@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:15
     container_name: postgres_langflow
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -13,16 +13,14 @@ services:
     restart: unless-stopped
 
   langflow:
-    image: langflowai/langflow:latest
+    image: langflowai/langflow:1.6.5
     container_name: langflow
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - LANGFLOW_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      # - LANGFLOW_AUTO_LOGIN=true
-      # - LANGFLOW_SUPERUSER=admin
-      # - LANGFLOW_SUPERUSER_PASSWORD=admin123
-      # - LANGFLOW_SECRET_KEY=my-secret-key-langflow
-      # - LANGFLOW_NEW_USER_IS_ACTIVE=true
+      - LANGFLOW_AUTO_LOGIN=true
+      - LANGFLOW_SUPERUSER=admin
+      - LANGFLOW_SUPERUSER_PASSWORD=admin123
     ports:
       - "7860:7860"
     depends_on:
