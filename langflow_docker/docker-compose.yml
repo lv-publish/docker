@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
 
   langflow:
-    image: langflowai/langflow:1.6.5
+    image: langflowai/langflow:1.6.6
     container_name: langflow
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
