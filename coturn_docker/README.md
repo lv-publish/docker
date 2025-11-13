@@ -20,8 +20,8 @@ docker run -d --restart unless-stopped --network=host coturn/coturn -n --realm=t
           "stun:stun.suremeet.vn:80",
           "stuns:stun.suremeet.vn:443"
         ],
-        "credential": null,
-        "username": null
+        "username": "root",
+        "credential": "123456"
       },
       {
         "urls": [
