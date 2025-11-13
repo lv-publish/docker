@@ -17,15 +17,16 @@ docker run -d --restart unless-stopped --network=host coturn/coturn -n --realm=t
     "IceServers": [
       {
         "urls": [
-          "stun:stun.suremeet.vn:80"
+          "stun:stun.suremeet.vn:80",
+          "stuns:stun.suremeet.vn:443"
         ],
         "credential": null,
         "username": null
       },
       {
         "urls": [
-          "turn:turn.suremeet.vn:80",
-          "turns:turn.suremeet.vn:443"
+          "turn:turn.suremeet.vn:80?transport=tcp",
+          "turns:turn.suremeet.vn:443?transport=tcp"
         ],
         "username": "root",
         "credential": "123456"
