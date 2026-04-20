@@ -1,31 +1,28 @@
 services:
-  postgres:
-    image: postgres:17
-    container_name: postgres_langflow
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    # ports:
-    #   - "5432:5432"
-    restart: unless-stopped
+    postgres:
+        image: postgres:17
+        container_name: postgres_langflow
+        environment:
+            - POSTGRES_USER:${POSTGRES_USER}
+            - POSTGRES_PASSWORD:${POSTGRES_PASSWORD}
+            - POSTGRES_DB:${POSTGRES_DB}
+        volumes:
+            - ./data:/var/lib/postgresql/data
+        # ports:
+        #   - "5432:5432"
+        restart: unless-stopped
 
-  langflow:
-    image: langflowai/langflow:1.6.6
-    container_name: langflow
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - LANGFLOW_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      - LANGFLOW_AUTO_LOGIN=true
-      - LANGFLOW_SUPERUSER=admin
-      - LANGFLOW_SUPERUSER_PASSWORD=admin123
-    ports:
-      - "7860:7860"
-    depends_on:
-      - postgres
-    restart: unless-stopped
-
-volumes:
-  postgres_data:
+    langflow:
+        image: langflowai/langflow:1.6.6
+        container_name: langflow
+        environment:
+            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - LANGFLOW_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - LANGFLOW_AUTO_LOGIN=${LANGFLOW_AUTO_LOGIN}
+            - LANGFLOW_SUPERUSER=${LANGFLOW_SUPERUSER}
+            - LANGFLOW_SUPERUSER_PASSWORD=${LANGFLOW_SUPERUSER_PASSWORD}
+        ports:
+            - "7860:7860"
+        depends_on:
+            - postgres
+        restart: unless-stopped
