@@ -1,28 +1,39 @@
 services:
-    postgres:
-        image: postgres:17
-        container_name: postgres_langflow
-        environment:
-            - POSTGRES_USER:${POSTGRES_USER}
-            - POSTGRES_PASSWORD:${POSTGRES_PASSWORD}
-            - POSTGRES_DB:${POSTGRES_DB}
-        volumes:
-            - ./data:/var/lib/postgresql/data
-        # ports:
-        #   - "5432:5432"
-        restart: unless-stopped
 
-    langflow:
-        image: langflowai/langflow:1.6.6
-        container_name: langflow
-        environment:
-            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-            - LANGFLOW_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-            - LANGFLOW_AUTO_LOGIN=${LANGFLOW_AUTO_LOGIN}
-            - LANGFLOW_SUPERUSER=${LANGFLOW_SUPERUSER}
-            - LANGFLOW_SUPERUSER_PASSWORD=${LANGFLOW_SUPERUSER_PASSWORD}
-        ports:
-            - "7860:7860"
-        depends_on:
-            - postgres
-        restart: unless-stopped
+  postgres:
+    image: postgres:17
+    container_name: postgres_langflow
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - net
+
+  langflow:
+    image: langflowai/langflow:1.6.6
+    container_name: langflow
+    environment:
+      LANGFLOW_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LANGFLOW_AUTO_LOGIN: "true"
+      LANGFLOW_SAVE_DB_IN_CONFIG_DIR: "false"
+      LANGFLOW_CONFIG_DIR: "/tmp/lf"
+      DO_NOT_TRACK: "true"
+    user: root
+    command: >
+      sh -c "mkdir -p /tmp/lf && chmod 777 /tmp/lf &&
+             python -m langflow run --host 0.0.0.0 --port 7860 --workers 1"
+    ports:
+      - "7860:7860"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
