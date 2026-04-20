@@ -14,7 +14,7 @@ services:
       - net
 
   langflow:
-    image: langflowai/langflow:1.6.6
+    image: langflowai/langflow:1.5.1
     container_name: langflow
     environment:
       LANGFLOW_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -22,6 +22,9 @@ services:
       LANGFLOW_SAVE_DB_IN_CONFIG_DIR: "false"
       LANGFLOW_CONFIG_DIR: "/tmp/lf"
       DO_NOT_TRACK: "true"
+      LANGFLOW_CORS_ORIGINS: "*"
+      LANGFLOW_CSRF_PROTECT: "false"
+      LANGFLOW_X_FRAME_OPTIONS: "ALLOWALL"
     user: root
     command: >
       sh -c "mkdir -p /tmp/lf && chmod 777 /tmp/lf &&
